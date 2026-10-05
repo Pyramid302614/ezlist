@@ -1,27 +1,38 @@
-<style>
-    @font-face {
-        font-family: Louis_George_Cafe;
-        src: url("/asset?file=Louis-George-Cafe.ttf&type=font/tff");
-    }
-    body {
-        padding: 40px;
-    }
-    #cs {
-        position: absolute;
-        font-family: Louis_George_Cafe;
-        font-size: 40px;
-        margin-top: 40px;
-    }
-</style>
-<div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover"></div>
-<img src="/asset?file=logo-big.png" alt="EZList" height="100px"></img>
-<br/>
-<span id="cs">Coming Soon</span>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-    $(window).on("load",() => {
-        $("#cover").fadeOut(800);
-        $("#cs").fadeOut(0);
-        setTimeout(() => $("#cs").fadeIn(800),200);
-    });
-</script>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EZList</title>
+        <meta name="description" content="Because simple things shouldn't be complicated.">
+        <meta property="og:image" content="/asset?file=logo-small.png">
+        <style>
+            @font-face {
+                font-family: Louis_George_Cafe;
+                src: url("/asset?file=Louis-George-Cafe.ttf&type=font/tff");
+            }
+            body {
+                padding: 40px;
+            }
+            #cs {
+                position: absolute;
+                font-family: Louis_George_Cafe;
+                font-size: 40px;
+                margin-top: 40px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover"></div>
+        <img src="/asset?file=logo-big.png" alt="EZList" height="100px"></img>
+        <br/>
+        <span id="cs">Coming Soon</span>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            $(window).on("load",() => {
+                $("#cover").fadeOut(800);
+                $("#cs").fadeOut(0);
+                setTimeout(() => $("#cs").fadeIn(800),200);
+            });
+        </script>
+    </body>
+</html>
