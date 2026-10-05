@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+        <title>EZList</title>
+        <style>
+            #logo {
+                height: 100%;
+                margin-right: 10px;
+            }
+            #topbar {
+                background: none;
+                height: 50px;
+                position: fixed;
+                display: flex;
+                place-items: center;
+                top: 0;
+                left: 0;
+                padding: 10px;
+                width: calc(100% - 20px);
+            }
+            .topbar-textinput {
+                border: none;
+                border-radius: 30px;
+                background-color: lightgray;
+                margin-left: 30px;
+                margin-right: 0px;
+                padding: 10px;
+                field-sizing: content;
+            }
+            .topbar-button {
+                border: none;
+                border-radius: 30px;
+                background-color: lightgray;
+                margin-left: 30px;
+                margin-right: 0px;
+                padding: 10px;
+                transition:
+                    padding 0.3s cubic-bezier(.19,.85,.06,1),
+                    margin-left 0.3s cubic-bezier(.19,.85,.06,1),
+                    margin-right 0.3s cubic-bezier(.19,.85,.06,1);
+                     
+            }
+            .topbar-button:hover {
+                padding: 15px;
+                margin-left: 25px;
+                margin-right: -5px;
+            }
+            .topbar-button:active {
+                padding: 10px;
+                margin-left: 30px;
+            }
+            #new-list {
+                border: none;
+                background: none;
+                margin-left: 30px;
+                width: 40px;
+                height: 40px;
+                rotate: 0deg;
+                transition:
+                    scale 0.5s cubic-bezier(.19,.85,.06,1),
+                    rotate 0.5s cubic-bezier(.19,.85,.06,1);
+            }
+            #new-list:hover {
+                rotate: 90deg;
+                scale: 1.33333;
+            }
+            #new-list:active {
+                scale: 1;
+            }
+            #settings {
+                border: none;
+                background: none;
+                position: fixed;
+                right: 20px;
+                top: 20px;
+                width: 40px;
+                height: 40px;
+                scale: 1.3333;
+                transition:
+                    scale 0.3s cubic-bezier(.19,.85,.06,1),
+                    rotate 0.3s cubic-bezier(.19,.85,.06,1);
+            }
+            #settings:hover {
+                scale: 2;
+                rotate: 90deg;
+            }
+            #settings:active {
+                scale: 1;
+            }
+            #actions {
+                border: none;
+                background: none;
+                position: fixed;
+                right: 70px;
+                top: 20px;
+                width: 40px;
+                height: 40px;
+                scale: 1.3333;
+                transition:
+                    scale 0.3s cubic-bezier(.19,.85,.06,1);
+            }
+            #actions:hover {
+                scale: 2;
+            }
+            #actions:active {
+                scale: 1;
+            }
+            #settings-dialog {
+                width: 300px;
+            }
+            .dialog::backdrop {
+                background-color: rgba(0,0,0,0.5);
+                backdrop-filter: blur(4px);
+            }
+            .dialog-close {
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                background: none;
+                border: none;
+                transition:
+                    scale 0.3s cubic-bezier(.19,.85,.06,1);
+            }
+            .dialog-close:hover {
+                scale: 2;
+            }
+            .dialog-close:active {
+                scale: 1;
+            }
+            span {
+                font-family: Arial;
+            }
+            button {
+                font-family: Arial;
+            }
+            #content {
+                position: absolute;
+                top: 70px;
+                left: 0px;
+                width: calc(100% - 40px);
+                padding: 20px;
+                padding-top: 0px; /* for the hr */
+            }
+            #content-hr {
+                width: 0%;
+                transition: width 0.8s cubic-bezier(.17,.67,.21,1);
+            }
+            #content-space {
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover"></div>
+        <div id="topbar">
+            <button id="settings"><i class="fa-solid fa-gear"></i></button>
+            <button id="actions"><i class="fa-solid fa-person-running"></i></button>
+            <a href="/" id="logo"><img id="logo" src="/asset?file=logo-big.png" alt="EZList"></a>
+            <div id="topbar-modules">
+                <!-- <input class="topbar-button" type="button" value="Main List"> -->
+            </div>
+            <input class="fa-solid fa-plus" type="button" id="new-list" value="+">
+        </div>
+        <div id="content">
+            <hr id="content-hr">
+            <div id="content-space"></div>
+        </div>
+        <dialog id="settings-dialog" class="dialog">
+            <span style="font-weight:bold;font-size:20px;">Settings</span>
+            <button id="settings-dialog-close" class="dialog-close"><i class="fa-solid fa-x"></i></button>
+            <hr>
+            <span>Change password:</span><br/>
+            <input type="password" id="settings-dialog-changepassword-textbox" value="???????"> | <button id="settings-dialog-changepassword-submit">Update</button>
+            <br/>
+            <br/>
+            <button id="settings-dialog-signout">Sign Out</button>
+        </dialog>
+        <dialog id="actions-dialog" class="dialog">
+            <span style="font-weight:bold;font-size:20px;">List Actions</span>
+            <button id="actions-dialog-close" class="dialog-close"><i class="fa-solid fa-x"></i></button>
+            <hr>
+            <span>List name</span>
+            <input type="text" id="actions-dialog-rename-textbox" value="???????">
+            <br/>
+            <br/>
+            <button id="actions-dialog-delete">Delete List</button>
+        </dialog>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+
+            var activeList = -1; // Index
+            var lists = [];
+            const cookies = {};
+            var ws;
+            const mobile = window.innerWidth < window.innerHeight;
+            
+            if(document.cookie != "") {
+                for(const sec of document.cookie.replaceAll("; ",";").split(";")) cookies[sec.split("=")[0]] = sec.slice(sec.split("=")[0].length+1);
+            } else {
+                window.location.href = "/login";
+            }
+
+            if(mobile) {
+                $("#logo").remove();
+                document.body.style.zoom = "150%";
+            }
+            
+            $(window).on("load",() => {
+
+                $("#cover").fadeOut(500);
+                setTimeout(() => document.getElementById("content-hr").style.width = "100%",200);
+
+                connectToWS().then(pullLists).then(() => {
+                    if(lists.length > 0) openList(0);
+                    else openList(-1);
+                });
+
+                document.getElementById("settings-dialog-changepassword-textbox").value = cookies.password;
+
+            });
+
+            $("#topbar-hitbox").on("douseover",() => $("#topbar").height("50px"));
+            $("#topbar-hitbox").on("mouseout",() => $("#topbar").height("25px"));
+            $("#settings").on("click",openSettings);
+            $("#actions").on("click",() => openListActions(activeList));
+            $("#settings-dialog-close").on("click",() => document.getElementById("settings-dialog").close());
+            $("#settings-dialog-signout").on("click",() => {
+                document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                window.location.reload();
+            });
+            $("#settings-dialog-changepassword-textbox").on("change",() => document.getElementById("settings-dialog-changepassword-submit").disabled = false)
+            $("#settings-dialog-changepassword-submit").on("click",() => {
+                document.getElementById("settings-dialog-changepassword-submit").disabled = true;
+                fetch(`/change-password?username=${cookies.username}&password=${cookies.password}&new-password=${document.getElementById("settings-dialog-changepassword-textbox").value}`);
+            });
+            $("#actions-dialog-close").on("click",() => document.getElementById("actions-dialog").close());
+
+            $("#new-list").on("click",() => {
+
+                const el = document.createElement("input");
+                el.type = "text";
+                el.className = "topbar-textinput";
+                el.placeholder = "Enter name...";
+
+                const index = lists.length;
+                el.id = `topbar-modules-${index}`;
+                lists.push({ name: "Unnamed" });
+
+                const submit = () => {
+                    lists[index].name = el.value;
+                    el.type = "button";
+                    el.className = "topbar-button";
+                    el.addEventListener("click",() => openList(index));
+                    el.addEventListener("contextmenu",e => {
+                        e.preventDefault();
+                        openListActions(index);
+                    });
+                    el.click();
+                    save();
+                };
+                el.addEventListener("focusout",() => {
+                    submit();
+                    el.removeEventListener("focusout",this);
+                });
+                el.addEventListener("keydown",e => {
+                    if(e.key == "Enter") submit();
+                    el.removeEventListener("keydown",this);
+                });
+                
+                $("#topbar-modules").append(el);
+                el.focus();
+
+            });
+
+            function save() {
+                console.log("Requested save");
+                pushLists();
+            }
+            
+            async function pullLists() {
+                lists = JSON.parse(
+                    await (
+                        await fetch(
+                            `/get-lists?username=${cookies.username}&password=${cookies.password}`
+                        )
+                    ).text()
+                );
+                $("#topbar-modules").empty();
+                for(var i = 0; i < lists.length; i++) {
+                    const list = lists[i];
+                    const el = document.createElement("input");
+                    el.type = "button";
+                    el.id = `topbar-modules-${i}`;
+                    el.value = list.name;
+                    el.className = "topbar-button";
+                    const index = i;
+                    el.addEventListener("click",() => openList(index));
+                    el.addEventListener("contextmenu",e => {
+                        e.preventDefault();
+                        openListActions(index);
+                    });
+                    $("#topbar-modules").append(el);
+                }
+            }
+            function pushLists() {
+                if(ws.readyState === WebSocket.OPEN) ws.send(`set-lists?value=${JSON.stringify(lists)}&username=${cookies.username}&password=${cookies.password}`);
+            }
+
+            async function connectToWS() {
+                console.log("[WS] Connecting to WebSocket...");
+                ws = new WebSocket("/");
+                ws.onclose = () => {
+                    console.log("[WS] Unexpected WebSocket closure; Reconnecting in 5 seconds...");
+                    setTimeout(connectToWS,5_000);
+                };
+                ws.onerror = e => {
+                    console.error("[WS] " + e);
+                };
+                await new Promise(resolve => {
+                    ws.onopen = () => {
+                        console.log("[WS] Connected!");
+                        resolve();
+                    }
+                });
+            }
+
+            function openListActions(i) {
+                if(i == -1) return;
+                $("#actions-dialog-rename-textbox").on("change",() => {
+                    const name = $("#actions-dialog-rename-textbox").val();
+                    lists[i].name = name;
+                    $(`#topbar-modules-${i}`).val(name);
+                });
+                $("#actions-dialog-rename-textbox").on("focusout",() => {
+                    pushLists();
+                });
+                $("#actions-dialog-delete").on("click",() => {
+                    lists.splice(i,1);
+                    document.getElementById("actions-dialog-delete").innerHTML = "...";
+                    document.getElementById("actions-dialog-delete").disabled = true;
+                    document.getElementById("actions-dialog-close").disabled = true;
+                    pushLists();
+                    setTimeout(async () => {
+                        await pullLists();
+                        $("#actions-dialog-close").click();
+                        document.getElementById("actions-dialog-delete").innerHTML = "Delete List";
+                        document.getElementById("actions-dialog-delete").disabled = false;
+                        document.getElementById("actions-dialog-close").disabled = false;
+                        openList(-1,false);
+                    },1000);
+                });
+                $("#actions-dialog-rename-textbox").val(lists[i].name);
+                document.getElementById("actions-dialog").showModal();
+            }
+            function openList(i,revertLastModuleStyles) {
+                revertLastModuleStyles = revertLastModuleStyles ?? true;
+                if(revertLastModuleStyles && activeList != -1 && lists.length > i) document.getElementById(`topbar-modules-${activeList}`).style.backgroundColor = "lightgray";
+                if(revertLastModuleStyles && activeList != -1 && lists.length > i) document.getElementById(`topbar-modules-${activeList}`).style.paddingLeft = "10px";
+                if(revertLastModuleStyles && activeList != -1 && lists.length > i) document.getElementById(`topbar-modules-${activeList}`).style.paddingRight = "10px";
+                activeList = i;
+                if(i != -1) document.getElementById(`topbar-modules-${activeList}`).style.backgroundColor = "gray";
+                if(i != -1) document.getElementById(`topbar-modules-${activeList}`).style.paddingLeft = "20px";
+                if(i != -1) document.getElementById(`topbar-modules-${activeList}`).style.paddingRight = "20px";
+                loadContent(renderListContent(i));
+            }
+            function openSettings() {
+                document.getElementById("settings-dialog").showModal();
+            }
+            function loadContent(content) {
+                document.getElementById("content-space").innerHTML = content;
+            }
+            function renderListContent(i) {
+                if(i == -1) return "<span style='color:gray'>Click a list in the topbar, or press + to create a new list</span>";
+                const list = lists[i];
+                return list.name;
+            }
+
+        </script>
+    </body>
+</html>

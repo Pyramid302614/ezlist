@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZList - Login</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        @font-face {
+            font-family: Louis_George_Cafe;
+            src: url("/asset?file=Louis-George-Cafe.ttf&type=font/tff");
+        }
+        body {
+            font-family: Louis_George_Cafe;
+        }
+        input {
+            font-family: Louis_George_Cafe;
+        }
+    </style>
+</head>
+<body>
+    <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover"></div>
+    <div style="width:100%;height:100%;display:flex;position:fixed;justify-content:center;align-items:center;">
+        <div style="transform:scale(1.5);text-align:center">
+            <!-- <span style="font-size:40px">EZList</span> -->
+            <img src="/asset?file=logo-big.png" alt="EZList" width="150px" style="margin-bottom:10px">
+            <br/>
+            <input type="text" id="username" placeholder="Username" style="border-radius:4px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-width:1px;border-style:solid;padding:3px;">
+            <br/>
+            <input type="password" id="password" placeholder="Password" style="border-radius:4px;border-top-left-radius:0;border-top-right-radius:0;border-width:1px;border-style:solid;padding:3px;">
+            <br/>
+            <div style="height:8px"></div>
+            <input type="button" style="width:100%" id="submit" value="Login">
+            <br/>
+            <span style="text-align:center;font-size:12px;" id="info-text"></span>
+            <br/>
+            <a href="/sign-up" style="color:gray">Don't have an account?</a>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(window).on("load",() => $("#cover").fadeOut(500));
+        if(document.cookie != "") {
+            const cookies = {};
+            for(const sec of document.cookie.replaceAll("; ",";").split(";")) cookies[sec.split("=")[0]] = sec.slice(sec.split("=")[0].length+1);
+            if(cookies.username !== undefined && cookies.password !== undefined) {
+                window.location.href = "/";
+            }            
+        }
+        // Backend connected
+        async function submit(username,password) {
+            const fetchResp = await fetch(`/creds?username=${username}&password=${password}`);
+            const txt = await fetchResp.text();
+            return txt === "true";
+        }
+        // Primarily frontend connected
+        async function submitSequence() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            document.getElementById("submit").disabled = true;
+            const correct = await submit(username,password);
+            if(correct) {
+                document.cookie = `username=${username};`;
+                document.cookie = `password=${password};`;
+                $("#cover").fadeIn(500);
+                setTimeout(() => window.location.href = "/",500);
+            } else {
+                document.getElementById("submit").disabled = false;
+                document.getElementById("info-text").innerHTML = "<span style='color:red;'>Incorrect username or password.</span>";                
+            }
+        }
+        window.addEventListener("keydown",e => {
+            if(e.key == "Enter") {
+                if(!document.getElementById("submit").disabled) submitSequence(); // async
+            }
+        });
+        document.getElementById("submit").addEventListener("click",e => {
+            submitSequence(); // async
+        });
+        document.getElementById("username").addEventListener("focus",e => {
+            document.getElementById("username").style.outline = "none";
+        });
+        document.getElementById("password").addEventListener("focus",e => {
+            document.getElementById("password").style.outline = "none";
+        });
+    </script>
+</body>
+</html>
