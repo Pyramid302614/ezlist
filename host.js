@@ -25,6 +25,12 @@ const server = require("http").createServer(
             req,
             res,
             (url,args) => {
+                if(require("./config.json").construction && url != "asset")
+                    return {
+                        file: "client/construction.html",
+                        type: "text/html",
+                        code: 200
+                    };
                 switch(url) {
                     case "": // Root "/"
                         return {

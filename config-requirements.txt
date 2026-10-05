@@ -1,0 +1,2 @@
+port: port to be hosted to
+construction: (true/false) locks every page to the construction page
