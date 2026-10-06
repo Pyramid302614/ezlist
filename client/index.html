@@ -636,6 +636,13 @@
                 pullLists(false);
                 if(lists.length > activeList) openList(activeList); else openList(-1,false);
             }
+            $(window).on("keydown",e => {
+                if(document.activeElement.id != "list-item-add") {
+                    if(e.ctrlKey && !e.shiftkey && e.key == "z") undo();
+                    if(e.ctrlKey && e.shiftKey && e.key == "z") redo(); // Typical
+                    if(e.ctrlKey && e.key == "y") redo(); // Classic
+                }
+            });
 
 
 
