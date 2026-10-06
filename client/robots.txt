@@ -1,0 +1,8 @@
+EZList is a todo-list website that is made to be simple and easy to understand.
+Released on 10/6/2026 (October 6h, 2026)
+Developed by Pyramid30 per request of Snakeiguess
+Lightning fast signup experience
+Lists saved to the cloud allowing for seamless cross-device access
+Doesn't care about your data, full privacy
+https://ezlist.site
+Emphasizes simplicity over complexity

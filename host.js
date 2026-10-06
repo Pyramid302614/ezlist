@@ -50,6 +50,18 @@ const server = require("http").createServer(
                             type: "text/html",
                             code: 200
                         };
+                    case "sitemap":
+                        return {
+                            file: "client/sitemap.txt",
+                            type: "text/plain",
+                            code: 200
+                        };
+                    case "robots.txt":
+                        return {
+                            file: "client/robots.txt",
+                            type: "text/plain",
+                            code: 200
+                        };
                     case "favicon.ico":
                         return {
                             file: "assets/logo-small.png",
