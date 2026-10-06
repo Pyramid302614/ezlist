@@ -6,6 +6,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
         <title>EZList</title>
         <style>
+            @font-face {
+                font-family: Louis_George_Cafe;
+                src: url("/asset?file=Louis-George-Cafe.ttf&type=font/tff");
+            }
+            :root {
+                --font-scale: 1;
+            }
             #logo {
                 height: 100%;
                 margin-right: 10px;
@@ -108,8 +115,46 @@
             #actions:active {
                 scale: 1;
             }
+            #undo {
+                border: none;
+                background: none;
+                position: fixed;
+                right: 170px;
+                top: 20px;
+                height: 40px;
+                scale: 1;
+                transition:
+                    scale 0.3s cubic-bezier(.19,.85,.06,1),
+                    rotate 0.5s cubic-bezier(.19,.85,.06,1);
+            }
+            #undo:hover {
+                scale: 1.5;
+                rotate: -360deg;
+            }
+            #undo:active {
+                scale: 0.8;
+            }
+            #redo {
+                border: none;
+                background: none;
+                position: fixed;
+                right: 130px;
+                top: 20px;
+                height: 40px;
+                scale: 1;
+                transition:
+                    scale 0.3s cubic-bezier(.19,.85,.06,1),
+                    rotate 0.3s cubic-bezier(.19,.85,.06,1);
+            }
+            #redo:hover {
+                scale: 1.5;
+                rotate: 360deg;
+            }
+            #redo:active {
+                scale: 0.8;
+            }
             #settings-dialog {
-                width: 300px;
+                width: calc(400px * var(--font-scale));
             }
             .dialog::backdrop {
                 background-color: rgba(0,0,0,0.5);
@@ -118,7 +163,7 @@
             .dialog-close {
                 position: absolute;
                 right: 20px;
-                top: 20px;
+                top: 13px;
                 background: none;
                 border: none;
                 transition:
@@ -131,10 +176,16 @@
                 scale: 1;
             }
             span {
-                font-family: Arial;
+                font-family: Louis_George_Cafe;
+                font-size: calc(20px * var(--font-scale));
             }
             button {
-                font-family: Arial;
+                font-family: Louis_George_Cafe;
+                font-size: calc(20px * var(--font-scale));
+            }
+            input {
+                font-family: Louis_George_Cafe;
+                font-size: calc(20px * var(--font-scale));
             }
             #content {
                 position: absolute;
@@ -151,16 +202,75 @@
             #content-space {
                 padding: 20px;
             }
+            .list-item {
+                font-size: calc(15px * var(--font-scale));
+                padding: 10px;
+                margin: 15px;
+                border-radius: 100px;
+                width: fit-content;
+                transition:
+                    margin-left 0.5s cubic-bezier(.17,.67,.07,.99),
+                    margin-top 0.3s cubic-bezier(.17,.67,.07,.99);
+            }
+            .list-item:hover {
+                margin-left: 30px;
+            }
+            .list-item:active {
+                margin-top: 25px;
+            }
+            #footer {
+                position: fixed;
+                bottom: 0;
+                margin: 40px;
+                width: calc(100% - 80px);
+            }
+            #list-item-add {
+                padding: 20px;
+                border-radius: 100px;
+                width: calc(calc(100% - 80px) - 80px);
+                margin-right: 20px;
+                field-sizing: fixed;
+                transition:
+                    margin-bottom 0.3s cubic-bezier(.17,.67,.07,.99);
+            }
+            #list-item-add:hover {
+                margin-bottom: 5px;
+            }
+            #list-item-add:active {
+                margin-bottom: 0px;
+            }
+            #list-item-add-button {
+                right: 40px;
+                width: 60px;
+                height: 60px;
+                border-radius: 100px;
+                background-color: black;
+                padding: 5px;
+                transition:
+                    margin-left 0.3s cubic-bezier(.17,.67,.07,.99);
+            }
+            #list-item-add-button:hover {
+                margin-left: -5px;
+            }
+            #list-item-add-button:active {
+                margin-left: 10px;
+            }
+            
         </style>
     </head>
     <body>
-        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover"></div>
+        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover">
+            <span style="font-size:50px" id="cover-text"></span>
+        </div>
         <div id="topbar">
+            <button id="undo"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            <button id="redo"><i class="fa-solid fa-arrow-rotate-right"></i></button>
             <button id="settings"><i class="fa-solid fa-gear"></i></button>
             <button id="actions"><i class="fa-solid fa-person-running"></i></button>
             <a href="/" id="logo"><img id="logo" src="/asset?file=logo-big.png" alt="EZList"></a>
             <div id="topbar-modules">
                 <!-- <input class="topbar-button" type="button" value="Main List"> -->
+                <span style="font-size:15px">Loading your lists...</span>
             </div>
             <input class="fa-solid fa-plus" type="button" id="new-list" value="+">
         </div>
@@ -168,12 +278,19 @@
             <hr id="content-hr">
             <div id="content-space"></div>
         </div>
+        <div id="footer">
+            <input type="text" id="list-item-add" placeholder="___" autocomplete="off" autofocus>
+            <button id="list-item-add-button"><i class="fa-solid fa-arrow-right fa-inverse" style="scale:2;margin-right:2px"></i></button>
+        </div>
         <dialog id="settings-dialog" class="dialog">
             <span style="font-weight:bold;font-size:20px;">Settings</span>
             <button id="settings-dialog-close" class="dialog-close"><i class="fa-solid fa-x"></i></button>
             <hr>
+            <span>Text size:</span><br/>
+            <div><input type="range" id="settings-dialog-textsize" min="0" max="100" value="50"> | <button id="settings-dialog-textsize-reset">Reset</button></div>
+            <br/>
             <span>Change password:</span><br/>
-            <input type="password" id="settings-dialog-changepassword-textbox" value="???????"> | <button id="settings-dialog-changepassword-submit">Update</button>
+            <div><input type="password" id="settings-dialog-changepassword-textbox" value="???????"> | <button id="settings-dialog-changepassword-submit">Update</button></div>
             <br/>
             <br/>
             <button id="settings-dialog-signout">Sign Out</button>
@@ -189,6 +306,7 @@
             <button id="actions-dialog-delete">Delete List</button>
         </dialog>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
         <script>
 
             var activeList = -1; // Index
@@ -205,20 +323,23 @@
 
             if(mobile) {
                 $("#logo").remove();
-                document.body.style.zoom = "150%";
+                document.body.style.zoom = "60%";
             }
             
             $(window).on("load",() => {
 
-                $("#cover").fadeOut(500);
                 setTimeout(() => document.getElementById("content-hr").style.width = "100%",200);
 
                 connectToWS().then(pullLists).then(() => {
+                    action(); // Jump start undo stack
                     if(lists.length > 0) openList(0);
                     else openList(-1);
+                    $("#cover").fadeOut(500);
                 });
 
                 document.getElementById("settings-dialog-changepassword-textbox").value = cookies.password;
+
+                newTodoBarPlaceholder();
 
             });
 
@@ -237,7 +358,29 @@
                 document.getElementById("settings-dialog-changepassword-submit").disabled = true;
                 fetch(`/change-password?username=${cookies.username}&password=${cookies.password}&new-password=${document.getElementById("settings-dialog-changepassword-textbox").value}`);
             });
+            $("#settings-dialog-textsize").on("input",() => {
+                document.documentElement.style.setProperty("--font-scale",parseFloat(document.getElementById("settings-dialog-textsize").value)/100+0.5);
+            });
+            $("#settings-dialog-textsize-reset").on("click",() => {
+                document.documentElement.style.setProperty("--font-scale",1);
+                $("#settings-dialog-textsize").val(50);
+            });
             $("#actions-dialog-close").on("click",() => document.getElementById("actions-dialog").close());
+            $("#undo").on("click",undo);
+            $("#redo").on("click",redo);
+            $("#list-item-add").on("keydown",e => {
+                if(e.key == "Enter") $("#list-item-add-button").click(); 
+            });
+            $("#list-item-add-button").on("click",() => {
+                if(!lists[activeList].items) lists[activeList].items = [];
+                lists[activeList].items.push({
+                    text: $("#list-item-add").val(),
+                    state: "normal"
+                });
+                $("#list-item-add").val("");
+                save();
+                openList(activeList); // Re-render
+            });
 
             $("#new-list").on("click",() => {
 
@@ -248,9 +391,10 @@
 
                 const index = lists.length;
                 el.id = `topbar-modules-${index}`;
-                lists.push({ name: "Unnamed" });
+                lists.push({ name: "Unnamed", items: [] });
 
                 const submit = () => {
+                    if(el.value == "") el.value = "Unnamed";
                     lists[index].name = el.value;
                     el.type = "button";
                     el.className = "topbar-button";
@@ -276,13 +420,16 @@
 
             });
 
-            function save() {
+            function save(Action) { // action: can you undo it and stuff
+                Action = Action ?? true;
                 console.log("Requested save");
+                if(Action) action();
                 pushLists();
             }
             
-            async function pullLists() {
-                lists = JSON.parse(
+            async function pullLists(fetc) { // fetc - should I actually fetch it or am I just re-rendering it
+                fetc = fetc ?? true;
+                if(fetc) lists = JSON.parse(
                     await (
                         await fetch(
                             `/get-lists?username=${cookies.username}&password=${cookies.password}`
@@ -319,6 +466,7 @@
                 };
                 ws.onerror = e => {
                     console.error("[WS] " + e);
+                    document.getElementById("cover-text").innerHTML = "Could not connect to websocket"
                 };
                 await new Promise(resolve => {
                     ws.onopen = () => {
@@ -330,33 +478,36 @@
 
             function openListActions(i) {
                 if(i == -1) return;
+                $("#actions-dialog-rename-textbox").off("change");
+                $("#actions-dialog-rename-textbox").off("focusout");
+                $("#actions-dialog-delete").off("click");
                 $("#actions-dialog-rename-textbox").on("change",() => {
                     const name = $("#actions-dialog-rename-textbox").val();
                     lists[i].name = name;
                     $(`#topbar-modules-${i}`).val(name);
                 });
                 $("#actions-dialog-rename-textbox").on("focusout",() => {
-                    pushLists();
+                    save();
                 });
                 $("#actions-dialog-delete").on("click",() => {
                     lists.splice(i,1);
                     document.getElementById("actions-dialog-delete").innerHTML = "...";
                     document.getElementById("actions-dialog-delete").disabled = true;
                     document.getElementById("actions-dialog-close").disabled = true;
-                    pushLists();
-                    setTimeout(async () => {
-                        await pullLists();
-                        $("#actions-dialog-close").click();
-                        document.getElementById("actions-dialog-delete").innerHTML = "Delete List";
-                        document.getElementById("actions-dialog-delete").disabled = false;
-                        document.getElementById("actions-dialog-close").disabled = false;
-                        openList(-1,false);
-                    },1000);
+                    save();
+                    pullLists(false);
+                    $("#actions-dialog-close").click();
+                    document.getElementById("actions-dialog-delete").innerHTML = "Delete List";
+                    document.getElementById("actions-dialog-delete").disabled = false;
+                    document.getElementById("actions-dialog-close").disabled = false;
+                    openList(-1,false);
                 });
                 $("#actions-dialog-rename-textbox").val(lists[i].name);
                 document.getElementById("actions-dialog").showModal();
             }
             function openList(i,revertLastModuleStyles) {
+                if(i == -1) document.getElementById("list-item-add").disabled = true;
+                else document.getElementById("list-item-add").disabled = false;
                 revertLastModuleStyles = revertLastModuleStyles ?? true;
                 if(revertLastModuleStyles && activeList != -1 && lists.length > i) document.getElementById(`topbar-modules-${activeList}`).style.backgroundColor = "lightgray";
                 if(revertLastModuleStyles && activeList != -1 && lists.length > i) document.getElementById(`topbar-modules-${activeList}`).style.paddingLeft = "10px";
@@ -371,12 +522,168 @@
                 document.getElementById("settings-dialog").showModal();
             }
             function loadContent(content) {
-                document.getElementById("content-space").innerHTML = content;
+                if(typeof content === "object") {
+                    $("#content-space").empty();
+                    document.getElementById("content-space").appendChild(content);
+                } else {
+                    document.getElementById("content-space").innerHTML = content;
+                }
             }
-            function renderListContent(i) {
-                if(i == -1) return "<span style='color:gray'>Click a list in the topbar, or press + to create a new list</span>";
-                const list = lists[i];
-                return list.name;
+            function renderListContent(iList) {
+                if(iList == -1) return "<span style='color:gray'>Click a list in the topbar, or press + to create a new list</span>";
+                const list = lists[iList];
+                const items = list.items ?? [];
+                const listSpace = document.createElement("div");
+                for(var i = 0; i < items.length; i++) {
+                    const index = i;
+                    const el = document.createElement("div");
+                    el.className = "list-item";
+                    el.id = `list-items-${index}`;
+                    el.addEventListener("click", () => {
+                        switch(lists[iList].items[index].state) {
+                            case "struck": lists[iList].items.splice(index,1); save(); listSpace.removeChild(el); openList(activeList); break;
+                            default:
+                                lists[iList].items[index].state = "struck";
+                                var allStruck = true;
+                                for(const item of lists[iList].items) if(item.state != "struck") allStruck = false;
+                                if(allStruck) {
+                                    Confetti();
+                                    const delEl = document.createElement("button");
+                                    delEl.className = "list-item";
+                                    delEl.style = "background-color:black;color:white;border:none;padding:15px;";
+                                    delEl.innerHTML = "Clear list";
+                                    delEl.onclick = () => {
+                                        lists[iList].items = [];
+                                        openList(activeList); // Automatically removes this element
+                                        save();
+                                    };
+                                    listSpace.appendChild(delEl);
+                                }
+                                save();
+                                update();
+                        }
+                    });
+                    const update = () => {
+                        switch(items[index].state) {
+                            case "struck": el.style.backgroundColor = "#f0f0f0"; el.style.color = "#666666"; break;
+                            default: el.style.backgroundColor = "#c2c2c2";
+                        }
+                        $("#"+el.id).empty();
+                        el.appendChild(
+                            (() => {
+                                const span = document.createElement("span");
+                                switch(items[index].state) {
+                                    case "struck": span.innerHTML = `<s>${items[index].text}</s>`; break;
+                                    default: span.innerHTML = items[index].text;
+                                }
+                                return span;
+                            })()
+                        );
+                    }
+                    update();
+                    listSpace.appendChild(el);
+                }
+                if(items.length == 0) {
+                    const span = document.createElement("span");
+                    span.innerHTML = "<span style='color:gray'>This list is empty. Use the textbar below to add something!</span>";
+                    listSpace.appendChild(span);
+                }
+                return listSpace;
+            }
+            function newTodoBarPlaceholder() {
+                const todos = [
+                    "3:00, Find the needle in the haystack",
+                    "2:00, Break the ice",
+                    "12:30, Cut the corners",
+                    "9:00, Hit the nail on the head",
+                    "1:30, Bite off more than I can chew",
+                    "5:00, Beat around the bush",
+                    "1:45, Cry over spilled milk",
+                    "5:00, Break a leg",
+                    "7:30, Jump on the bandwagon",
+                    "1:00, Address the elephant in the room",
+                    "8:00, Count the chickens before they hatch",
+                    "1:00, Put all my apples in one basket",
+                    "5:00, Study rocket science"
+                ];
+                document.getElementById("list-item-add").placeholder = todos[Math.floor(Math.random()*todos.length)];
+            }
+
+
+            const undoStack = [];
+            const redoStack = [];
+
+            function action() {
+                redoStack.length = 0;
+                undoStack.push(structuredClone(lists));
+            }
+            function undo() {
+                if(undoStack.length <= 1) return;
+                redoStack.push(undoStack[undoStack.length-1]);
+                undoStack.pop();
+                lists = structuredClone(undoStack[undoStack.length-1]);
+                save(false);
+                pullLists(false);
+                if(lists.length > activeList) openList(activeList); else openList(-1,false);
+            }
+            function redo() {
+                if(redoStack.length == 0) return;
+                const state = structuredClone(redoStack[redoStack.length-1]);
+                lists = state;
+                redoStack.pop();
+                undoStack.push(state);
+                save(false);
+                pullLists(false);
+                if(lists.length > activeList) openList(activeList); else openList(-1,false);
+            }
+
+
+
+            function Confetti() {
+
+                // https://www.kirilv.com/canvas-confetti/#random
+
+                var count = 300;
+                var defaults = {
+                    particleCount: 300,
+                    angle: -90,
+                    origin: {
+                        x: 0.5,
+                        y: -0.3
+                    },
+                    gravity: 1.2,
+                };
+
+                const fire = function(particleRatio, opts) {
+                    confetti({
+                        ...defaults,
+                        ...opts,
+                        particleCount: Math.floor(count * particleRatio)
+                    });
+                }
+
+                fire(0.25, {
+                    spread: 26,
+                    startVelocity: 55,
+                });
+                fire(0.2, {
+                    spread: 60,
+                });
+                fire(0.35, {
+                    spread: 300,
+                    decay: 0.91,
+                    scalar: 0.8
+                });
+                fire(0.1, {
+                    spread: 320,
+                    startVelocity: 25,
+                    decay: 0.92,
+                    scalar: 1.2
+                });
+                fire(0.1, {
+                    spread: 320,
+                    startVelocity: 45,
+                });
             }
 
         </script>
