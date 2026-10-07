@@ -327,6 +327,9 @@
             } else {
                 window.location.href = "/login";
             }
+            if(cookies.username === undefined || cookies.password == undefined) {
+                window.location.href = "/login";
+            }
 
             if(mobile) {
                 $("#logo").remove();
