@@ -282,6 +282,7 @@
         </div>
         <div id="footer">
             <input type="text" id="list-item-add" placeholder="___" autocomplete="off" autofocus>
+            <input type="text" hidden> <!-- Textbox + button = browser think password, suggest autofill --- this is to prevent that -->
             <button id="list-item-add-button"><i class="fa-solid fa-arrow-right fa-inverse" style="scale:2;margin-right:2px"></i></button>
         </div>
         <dialog id="settings-dialog" class="dialog">
@@ -360,7 +361,7 @@
                 document.getElementById("settings-dialog-changepassword-submit").disabled = true;
                 fetch(`/change-password?username=${cookies.username}&password=${cookies.password}&new-password=${document.getElementById("settings-dialog-changepassword-textbox").value}`);
             });
-            $("#settings-dialog-textsize").on("input",() => {
+            $("#settings-dialog-textsize").on("change",() => {
                 document.documentElement.style.setProperty("--font-scale",parseFloat(document.getElementById("settings-dialog-textsize").value)/100+0.5);
             });
             $("#settings-dialog-textsize-reset").on("click",() => {
