@@ -261,7 +261,7 @@
         </style>
     </head>
     <body>
-        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;" id="cover">
+        <div style="z-index:9999;position:fixed;top:0;left:0;width:100%;height:100%;background-color:white;display:flex;justify-content:center;place-items:center;" id="cover">
             <span style="font-size:50px" id="cover-text"></span>
         </div>
         <div id="topbar">
@@ -312,6 +312,10 @@
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
         <script>
 
+            const loadingText = false;
+            if(!loadingText) document.getElementById("cover-text").style.opacity = 0;
+            window.addEventListener("keydown",e => { if(e.ctrlKey && e.key == "d") { e.preventDefault(); document.getElementById("cover-text").style.opacity = 1; }});
+
             var activeList = -1; // Index
             var lists = [];
             const cookies = {};
@@ -328,6 +332,9 @@
                 $("#logo").remove();
                 document.body.style.zoom = "60%";
             }
+
+            $("#cover-text").fadeOut(0);
+            $("#cover-text").fadeIn(1000);
             
             $(window).on("load",() => {
 
@@ -337,6 +344,7 @@
                     action(); // Jump start undo stack
                     if(lists.length > 0) openList(0);
                     else openList(-1);
+                    $("#cover-text").fadeOut(300);
                     $("#cover").fadeOut(500);
                 });
 
@@ -432,13 +440,16 @@
             
             async function pullLists(fetc) { // fetc - should I actually fetch it or am I just re-rendering it
                 fetc = fetc ?? true;
-                if(fetc) lists = JSON.parse(
-                    await (
-                        await fetch(
-                            `/get-lists?username=${cookies.username}&password=${cookies.password}`
-                        )
-                    ).text()
-                );
+                if(fetc) {
+                    document.getElementById("cover-text").innerHTML = "Fetching lists";                   
+                    lists = JSON.parse(
+                        await (
+                            await fetch(
+                                `/get-lists?username=${cookies.username}&password=${cookies.password}`
+                            )
+                        ).text()
+                    );
+                }
                 $("#topbar-modules").empty();
                 for(var i = 0; i < lists.length; i++) {
                     const list = lists[i];
@@ -461,8 +472,9 @@
             }
 
             async function connectToWS() {
+                document.getElementById("cover-text").innerHTML = "Connecting";
                 console.log("[WS] Connecting to WebSocket...");
-                ws = new WebSocket("/");
+                ws = new WebSocket(`${window.location.protocol=="https:"?"wss://":"ws://"}${window.location.host}/`);
                 ws.onclose = () => {
                     console.log("[WS] Unexpected WebSocket closure; Reconnecting in 5 seconds...");
                     setTimeout(connectToWS,5_000);
