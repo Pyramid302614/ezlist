@@ -50,7 +50,7 @@ const server = require("http").createServer(
                             type: "text/html",
                             code: 200
                         };
-                    case "sitemap":
+                    case "sitemap.txt":
                         return {
                             file: "client/sitemap.txt",
                             type: "text/plain",
