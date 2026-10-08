@@ -1,3 +1,4 @@
 https://ezlist.site/
 https://ezlist.site/login
 https://ezlist.site/sign-up
+https://ezlist.site/about.txt
