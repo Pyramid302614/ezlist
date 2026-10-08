@@ -62,6 +62,12 @@ const server = require("http").createServer(
                             type: "text/plain",
                             code: 200
                         };
+                    case "about.txt":
+                        return {
+                            file: "client/about.txt",
+                            type: "text/plain",
+                            code: 200
+                        };
                     case "favicon.ico":
                         return {
                             file: "assets/logo-small.png",
