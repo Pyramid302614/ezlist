@@ -592,7 +592,7 @@
                                 const span = document.createElement("span");
                                 switch(items[index].state) {
                                     case "struck": span.innerHTML = `<s>${items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","</a>")}</s>`; break;
-                                    default: span.innerHTML = items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","'>"+items[index].text+"</a>");
+                                    default: span.innerHTML = items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","'>"+items[index].text.replaceAll("<!!!!","").replaceAll("!!!!>","")+"</a>");
                                 }
                                 return span;
                             })()
