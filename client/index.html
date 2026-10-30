@@ -591,12 +591,15 @@
                             (() => {
                                 const span = document.createElement("span");
                                 switch(items[index].state) {
-                                    case "struck": span.innerHTML = `<s>${items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","</a>")}</s>`; break;
-                                    default: span.innerHTML = items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","'>"+items[index].text.replaceAll("<!!!!","").replaceAll("!!!!>","")+"</a>");
+                                    case "struck": span.innerHTML = `<s>${items[index].text.replaceAll("<!!!!",`<a target='_blank' id='list-item-link-${index}' href='`).replaceAll("!!!!>","'>"+items[index].text.replaceAll("<!!!!","").replaceAll("!!!!>","")+"</a>")}</s>`; break;
+                                    default: span.innerHTML = items[index].text.replaceAll("<!!!!",`<a target='_blank' id='list-item-link-${index}' href='`).replaceAll("!!!!>","'>"+items[index].text.replaceAll("<!!!!","").replaceAll("!!!!>","")+"</a>");
                                 }
                                 return span;
                             })()
                         );
+                        setTimeout(() => $(`#list-item-link-${index}`).on("click",e => {
+                            e.stopPropagation();
+                        }),500);
                     }
                     update();
                     listSpace.appendChild(el);
