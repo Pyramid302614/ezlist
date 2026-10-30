@@ -471,7 +471,7 @@
                 }
             }
             function pushLists() {
-                if(ws.readyState === WebSocket.OPEN) ws.send(`set-lists?value=${JSON.stringify(lists)}&username=${cookies.username}&password=${cookies.password}`);
+                if(ws.readyState === WebSocket.OPEN) ws.send(`set-lists?value=${JSON.stringify(lists).replaceAll("?","****????").replaceAll("&","****&&&&").replaceAll("=","****====")}&username=${cookies.username}&password=${cookies.password}`);
             }
 
             async function connectToWS() {
