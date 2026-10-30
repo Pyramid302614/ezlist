@@ -115,7 +115,7 @@ wss.on("connection",ws => {
         const msg = m.toString();
         const name = msg.split("?")[0];
         const args = [];
-        if(msg.includes("?")) msg.slice(msg.split("?")[0].length+1).split("&").forEach(i => args[i.split("=")[0]] = i.slice(i.split("=")[0].length+1));
+        if(msg.includes("?")) msg.slice(msg.split("?")[0].length+1).split("&").forEach(i => args[i.split("=")[0].replaceAll("****????","?").replaceAll("****&&&&","&").replaceAll("****====","=")] = i.slice(i.split("=")[0].length+1).replaceAll("****????","?").replaceAll("****&&&&","&").replaceAll("****====","="));
         switch(name) {
             case "set-lists":
                 if(args.username === undefined || args.password === undefined) break;

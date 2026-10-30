@@ -591,8 +591,8 @@
                             (() => {
                                 const span = document.createElement("span");
                                 switch(items[index].state) {
-                                    case "struck": span.innerHTML = `<s>${items[index].text}</s>`; break;
-                                    default: span.innerHTML = items[index].text;
+                                    case "struck": span.innerHTML = `<s>${items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","</a>")}</s>`; break;
+                                    default: span.innerHTML = items[index].text.replaceAll("<!!!!","<a href='").replaceAll("!!!!>","</a>");
                                 }
                                 return span;
                             })()
